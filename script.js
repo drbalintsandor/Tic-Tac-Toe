@@ -9,6 +9,7 @@ const computerScoreDisplay = document.getElementById("computerScore");
 let currentPlayer = "X";
 let gameBoard = ["", "", "", "", "", "", "", "", ""];
 let gameOver = false;
+let lastWinningMove = null;
 
 let playerScore = 0;
 let computerScore = 0;
@@ -38,15 +39,21 @@ function makeMove(index, player) {
     gameBoard[index] = player;
     cells[index].textContent = player;
     if (checkWinner()) {
+        lastWinningMove = index;
         if (player === "O") {
             resultDisplay.textContent = `${computerNameInput.value} wins!`;
         } else {
             resultDisplay.textContent = `Player ${player} wins!`;
         }
         updateScore(player);
+        setTimeout(() => {
+            startNewGame();
+        }, 1000);
     } else if (isBoardFull()) {
         resultDisplay.textContent = "It's a draw!";
-        resetGame(); // Start a new game immediately after a draw
+        setTimeout(() => {
+            startNewGame(); // Start a new game 1 second after a draw
+        }, 1000);
     }
 }
 
@@ -132,51 +139,76 @@ function getBlockingMove() {
     return null;
 }
 
-// Function to update the score and start a new game
+// Function to update the score
 function updateScore(player) {
     if (player === "X") {
         playerScore++;
         playerScoreDisplay.textContent = `${playerNameInput.value}: ${playerScore}`;
+        if (playerScore === 5) {
+            // Player won 5 times, show congratulations message
+            showCongratulationsMessage();
+        }
     } else if (player === "O") {
         computerScore++;
         computerScoreDisplay.textContent = `${computerNameInput.value}: ${computerScore}`;
-    }
-
-    // Reset the game for a new round after a delay
-    setTimeout(() => {
-        currentPlayer = "X";
-        gameBoard = ["", "", "", "", "", "", "", "", ""];
-        gameOver = false;
-        cells.forEach((cell) => {
-            cell.textContent = "";
-        });
-        resultDisplay.textContent = "";
-
-        // If the computer starts, make its move
-        if (currentPlayer === "O") {
-            computerMove();
-            currentPlayer = "X";
+        if (computerScore === 5) {
+            // Computer won 5 times, show loser message
+            showLoserMessage();
         }
-    }, 1000); // Adjust the delay time as needed
+    }
+}
+
+// Function to show congratulations message
+function showCongratulationsMessage() {
+    Swal.fire({
+        title: "Congratulations, you won!",
+        width: 600,
+        padding: "3em",
+        color: "#716add",
+        background: "#fff url(/images/trees.png)",
+        backdrop: `
+            rgba(0,0,123,0.4)
+            url("/images/nyan-cat.gif")
+            left top
+            no-repeat
+        `,
+    });
+}
+
+// Function to show loser message
+function showLoserMessage() {
+    Swal.fire({
+        title: "You Lost!Loser!",
+        width: 600,
+        padding: "3em",
+        color: "#716add",
+        background: "#fff url(/images/trees.png)",
+        backdrop: `
+            rgba(0,0,123,0.4)
+            url("/images/nyan-cat.gif")
+            left top
+            no-repeat
+        `,
+    });
 }
 
 // Function to reset the game and scores
 function resetGame() {
-    currentPlayer = "X";
-    gameBoard = ["", "", "", "", "", "", "", "", ""];
-    gameOver = false;
-    cells.forEach((cell) => {
-        cell.textContent = "";
-    });
-    resultDisplay.textContent = "";
     playerScore = 0;
     computerScore = 0;
     playerScoreDisplay.textContent = `${playerNameInput.value}: 0`;
     computerScoreDisplay.textContent = `${computerNameInput.value}: 0`;
+    startNewGame();
+}
 
-    // If the computer starts, make its move
-    if (currentPlayer === "O") {
-        computerMove();
-        currentPlayer = "X";
-    }
+// Function to start a new game
+function startNewGame() {
+    currentPlayer = "X";
+    gameBoard = ["", "", "", "", "", "", "", "", ""];
+    gameOver = false;
+    lastWinningMove = null;
+    cells.forEach((cell) => {
+        cell.textContent = "";
+    });
+    resultDisplay.textContent = "";
 }
