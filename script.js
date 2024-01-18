@@ -1,8 +1,8 @@
 const board = document.getElementById("board");
 const cells = document.querySelectorAll(".cell");
 const resultDisplay = document.getElementById("result");
-const playerNameInput = document.getElementById("playerName");
-const computerNameInput = document.getElementById("computerName");
+const playerNameInput = document.getElementById("playerName") || { value: "Player" };
+const computerNameInput = document.getElementById("computerName") || { value: "Computer" };
 const playerScoreDisplay = document.getElementById("playerScore");
 const computerScoreDisplay = document.getElementById("computerScore");
 
@@ -38,12 +38,15 @@ function makeMove(index, player) {
     gameBoard[index] = player;
     cells[index].textContent = player;
     if (checkWinner()) {
-        resultDisplay.textContent = `Player ${player} wins!`;
+        if (player === "O") {
+            resultDisplay.textContent = `${computerNameInput.value} wins!`;
+        } else {
+            resultDisplay.textContent = `Player ${player} wins!`;
+        }
         updateScore(player);
-        gameOver = true;
     } else if (isBoardFull()) {
         resultDisplay.textContent = "It's a draw!";
-        gameOver = true;
+        resetGame(); // Start a new game immediately after a draw
     }
 }
 
@@ -72,21 +75,64 @@ function isBoardFull() {
 
 // Function for the computer's move
 function computerMove() {
-    const availableMoves = gameBoard.reduce((acc, cell, index) => {
-        if (cell === "") {
-            acc.push(index);
-        }
-        return acc;
-    }, []);
+    const winningMove = getWinningMove();
+    const blockingMove = getBlockingMove();
 
-    if (availableMoves.length > 0) {
-        const randomIndex = Math.floor(Math.random() * availableMoves.length);
-        const computerIndex = availableMoves[randomIndex];
-        makeMove(computerIndex, "O");
+    // Priority: Winning move > Blocking move > Random move
+    if (winningMove !== null) {
+        makeMove(winningMove, "O");
+    } else if (blockingMove !== null) {
+        makeMove(blockingMove, "O");
+    } else {
+        // If no winning or blocking move, make a random move
+        const availableMoves = gameBoard.reduce((acc, cell, index) => {
+            if (cell === "") {
+                acc.push(index);
+            }
+            return acc;
+        }, []);
+
+        if (availableMoves.length > 0) {
+            const randomIndex = Math.floor(Math.random() * availableMoves.length);
+            const computerIndex = availableMoves[randomIndex];
+            makeMove(computerIndex, "O");
+        }
     }
 }
 
-// Function to update the score
+// Helper function to find a winning move
+function getWinningMove() {
+    for (let i = 0; i < 9; i++) {
+        if (gameBoard[i] === "") {
+            // Simulate making the move and check for a win
+            gameBoard[i] = "O";
+            if (checkWinner()) {
+                gameBoard[i] = ""; // Reset the move
+                return i;
+            }
+            gameBoard[i] = ""; // Reset the move
+        }
+    }
+    return null;
+}
+
+// Helper function to find a blocking move
+function getBlockingMove() {
+    for (let i = 0; i < 9; i++) {
+        if (gameBoard[i] === "") {
+            // Simulate making the move and check for a player win
+            gameBoard[i] = "X";
+            if (checkWinner()) {
+                gameBoard[i] = ""; // Reset the move
+                return i;
+            }
+            gameBoard[i] = ""; // Reset the move
+        }
+    }
+    return null;
+}
+
+// Function to update the score and start a new game
 function updateScore(player) {
     if (player === "X") {
         playerScore++;
@@ -95,9 +141,26 @@ function updateScore(player) {
         computerScore++;
         computerScoreDisplay.textContent = `${computerNameInput.value}: ${computerScore}`;
     }
+
+    // Reset the game for a new round after a delay
+    setTimeout(() => {
+        currentPlayer = "X";
+        gameBoard = ["", "", "", "", "", "", "", "", ""];
+        gameOver = false;
+        cells.forEach((cell) => {
+            cell.textContent = "";
+        });
+        resultDisplay.textContent = "";
+
+        // If the computer starts, make its move
+        if (currentPlayer === "O") {
+            computerMove();
+            currentPlayer = "X";
+        }
+    }, 1000); // Adjust the delay time as needed
 }
 
-// Function to reset the game
+// Function to reset the game and scores
 function resetGame() {
     currentPlayer = "X";
     gameBoard = ["", "", "", "", "", "", "", "", ""];
@@ -106,4 +169,14 @@ function resetGame() {
         cell.textContent = "";
     });
     resultDisplay.textContent = "";
+    playerScore = 0;
+    computerScore = 0;
+    playerScoreDisplay.textContent = `${playerNameInput.value}: 0`;
+    computerScoreDisplay.textContent = `${computerNameInput.value}: 0`;
+
+    // If the computer starts, make its move
+    if (currentPlayer === "O") {
+        computerMove();
+        currentPlayer = "X";
+    }
 }
