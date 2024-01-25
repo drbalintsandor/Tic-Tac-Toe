@@ -52,7 +52,7 @@ function makeMove(index, player) {
     } else if (isBoardFull()) {
         resultDisplay.textContent = "It's a draw!";
         setTimeout(() => {
-            startNewGame(); // Start a new game 1 second after a draw
+            startNewGame(); 
         }, 1000);
     }
 }
@@ -60,9 +60,9 @@ function makeMove(index, player) {
 // Function to check for a winner
 function checkWinner() {
     const winPatterns = [
-        [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
-        [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
-        [0, 4, 8], [2, 4, 6]             // Diagonals
+        [0, 1, 2], [3, 4, 5], [6, 7, 8], 
+        [0, 3, 6], [1, 4, 7], [2, 5, 8], 
+        [0, 4, 8], [2, 4, 6]             
     ];
 
     for (const pattern of winPatterns) {
@@ -91,7 +91,7 @@ function computerMove() {
     } else if (blockingMove !== null) {
         makeMove(blockingMove, "O");
     } else {
-        // If no winning or blocking move, make a random move
+        
         const availableMoves = gameBoard.reduce((acc, cell, index) => {
             if (cell === "") {
                 acc.push(index);
@@ -111,13 +111,13 @@ function computerMove() {
 function getWinningMove() {
     for (let i = 0; i < 9; i++) {
         if (gameBoard[i] === "") {
-            // Simulate making the move and check for a win
+            
             gameBoard[i] = "O";
             if (checkWinner()) {
-                gameBoard[i] = ""; // Reset the move
+                gameBoard[i] = ""; 
                 return i;
             }
-            gameBoard[i] = ""; // Reset the move
+            gameBoard[i] = ""; /
         }
     }
     return null;
@@ -127,13 +127,12 @@ function getWinningMove() {
 function getBlockingMove() {
     for (let i = 0; i < 9; i++) {
         if (gameBoard[i] === "") {
-            // Simulate making the move and check for a player win
             gameBoard[i] = "X";
             if (checkWinner()) {
-                gameBoard[i] = ""; // Reset the move
+                gameBoard[i] = ""; 
                 return i;
             }
-            gameBoard[i] = ""; // Reset the move
+            gameBoard[i] = ""; 
         }
     }
     return null;
@@ -145,14 +144,14 @@ function updateScore(player) {
         playerScore++;
         playerScoreDisplay.textContent = `${playerNameInput.value}: ${playerScore}`;
         if (playerScore === 5) {
-            // Player won 5 times, show congratulations message
+            
             showCongratulationsMessage();
         }
     } else if (player === "O") {
         computerScore++;
         computerScoreDisplay.textContent = `${computerNameInput.value}: ${computerScore}`;
         if (computerScore === 5) {
-            // Computer won 5 times, show loser message
+        
             showLoserMessage();
         }
     }
