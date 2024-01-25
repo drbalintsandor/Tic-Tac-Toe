@@ -50,3 +50,81 @@ h1 {
     background-color: #38383a;
 
 }
+
+.player-score {
+    background-color: #434346; 
+}
+
+
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #000000;
+}
+
+input {
+    padding: 10px;
+    margin-bottom: 20px;
+    font-size: 16px;
+    border: 2px solid #000000;
+    border-radius: 8px;
+    color: #333;
+}
+
+#board {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    gap: 10px;
+    justify-content: center;
+}
+
+.cell {
+    width: 105px;
+    height: 105px;
+    background: #000000;
+    color: #fcfcfc;
+    font-size: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: background 0.3s ease-in-out, transform 0.2s ease-in-out;
+    box-shadow: 15px 15px 15px 15px rgba(255, 43, 43, 0.3);
+
+}
+
+.cell:hover {
+    background: #b32b2b;
+    transform: scale(1.1);
+}
+
+
+.cell.win {
+    animation: cellHighlight 1s infinite;
+}
+
+p#result {
+    margin: 20px 0;
+    font-size: 24px;
+    font-weight: bold;
+    color: #3498db;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+button#resetButton {
+    background: #3b3b3b;
+    color: #ffffff;
+    padding: 15px 30px;
+    font-size: 18px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+}
+
+button#resetButton:hover {
+    background: #d61f1f;
+}
+
